@@ -12,11 +12,14 @@ struct ManualLocationSheetView: View {
     var body: some View {
         VStack(spacing: 16) {
             
-            VStack {
+            VStack(spacing: 4) {
                 Text("Set Location Manually")
                     .font(.headline)
                 Text("Start typing a city or paste coordinates.")
                     .font(.subheadline)
+                    .foregroundColor(Color("SecondaryTextColor"))
+                Text("Search is powered by OpenStreetMap.")
+                    .font(.caption2)
                     .foregroundColor(Color("SecondaryTextColor"))
             }
             .padding(.top, 8)

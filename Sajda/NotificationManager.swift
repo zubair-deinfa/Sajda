@@ -5,8 +5,17 @@ import UserNotifications
 
 struct NotificationManager {
     
-    static func requestPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+    static func requestPermission(completion: ((Bool) -> Void)? = nil) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            #if DEBUG
+            if let error = error {
+                print("Notification authorization error: \(error.localizedDescription)")
+            }
+            #endif
+            DispatchQueue.main.async {
+                completion?(granted)
+            }
+        }
     }
     
     static func scheduleNotifications(for prayerTimes: [String: Date], prayerOrder: [String], adhanSound: AdhanSound, customSoundPath: String) {

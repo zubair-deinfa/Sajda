@@ -16,7 +16,9 @@ struct StartupManager {
                 try service.unregister()
             }
         } catch {
+            #if DEBUG
             print("Failed to update launch at login setting: \(error.localizedDescription)")
+            #endif
         }
     }
 }
