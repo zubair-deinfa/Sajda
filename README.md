@@ -126,6 +126,14 @@ As a testament to its efficiency, Sajda was developed and tested on a 2012 MacBo
 
 ---
 
+## Security
+
+Sajda Pro runs in a macOS sandbox with minimal entitlements and makes no authenticated network calls. A full security audit has been completed — see [`SECURITY_AUDIT.md`](SECURITY_AUDIT.md) for details.
+
+**Privacy note:** When using manual location search, queries are sent to [OpenStreetMap's Nominatim](https://nominatim.openstreetmap.org/) geocoding service. No other user data leaves the device.
+
+---
+
 ## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
