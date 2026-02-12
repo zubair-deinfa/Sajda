@@ -37,6 +37,11 @@ struct ManualLocationView: View {
             TextField(LocalizedStringKey("Search for a city or paste coordinates..."), text: $vm.locationSearchQuery)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal, 12)
+
+            Text("Search is powered by OpenStreetMap.")
+                .font(.caption2)
+                .foregroundColor(Color("SecondaryTextColor"))
+                .padding(.horizontal, 12)
             
             ScrollView {
                 if vm.isLocationSearching {

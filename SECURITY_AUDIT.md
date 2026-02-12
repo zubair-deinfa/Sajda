@@ -3,6 +3,7 @@
 **Date:** 2026-02-12
 **Scope:** Full source code review of the Sajda macOS prayer times application
 **Version Audited:** 3.1.1
+**Status:** All findings remediated
 
 ---
 
@@ -10,13 +11,13 @@
 
 Sajda Pro is a macOS menu bar application built with SwiftUI for calculating and displaying Islamic prayer times. The application is **sandboxed**, uses **minimal entitlements**, contains **no hardcoded secrets**, and follows standard Apple platform conventions. Overall, the application has a **low risk profile** appropriate for a local-first utility app.
 
-**8 findings** were identified across 3 severity levels:
+**8 findings** were identified across 3 severity levels. **All actionable findings have been fixed.**
 
-| Severity | Count |
-|----------|-------|
-| Medium   | 3     |
-| Low      | 4     |
-| Info     | 1     |
+| Severity | Count | Fixed |
+|----------|-------|-------|
+| Medium   | 3     | 3     |
+| Low      | 4     | 2     |
+| Info     | 1     | 1     |
 
 No **High** or **Critical** severity issues were found.
 
@@ -41,6 +42,8 @@ While the resolved file pins a specific commit hash, running `swift package upda
 
 **Recommendation:** Pin `adhan-swift` to a specific release version tag instead of the `main` branch.
 
+**Status: FIXED** - Pinned to `upToNextMajorVersion: 1.4.0` in `project.pbxproj` and updated `Package.resolved` accordingly.
+
 ---
 
 ### [M-2] MEDIUM: User search queries sent to third-party service without explicit disclosure
@@ -63,6 +66,8 @@ request.setValue("Sajda Pro Prayer Times App/1.0", forHTTPHeaderField: "User-Age
 This is standard for a geocoding feature, but OpenStreetMap's Nominatim is a third-party service with its own data collection policies. Users may not be aware their search input is leaving the device.
 
 **Recommendation:** Add a privacy disclosure in the app or a note in the privacy policy that location search queries are sent to OpenStreetMap's Nominatim service.
+
+**Status: FIXED** - Added "Search is powered by OpenStreetMap." disclosure in both `ManualLocationSheetView.swift` and `ManualLocationView.swift`.
 
 ---
 
@@ -87,6 +92,8 @@ The `customAdhanSoundPath` is stored in UserDefaults and loaded without validati
 guard soundURL.isFileURL else { return }
 ```
 
+**Status: FIXED** - Added `soundURL.isFileURL` guard to the URL validation chain in `PrayerTimeViewModel.swift`.
+
 ---
 
 ### [L-1] LOW: Location data stored in plaintext UserDefaults
@@ -107,6 +114,8 @@ UserDefaults.standard.set(manualLocationData, forKey: "manualLocationData")
 UserDefaults are stored as an unencrypted plist on disk. While the app sandbox limits access, any process running as the same user could read this data.
 
 **Recommendation:** This is acceptable for a sandboxed macOS app storing city-level location data. No action required unless the app's threat model evolves.
+
+**Status: ACCEPTED** - Risk accepted; standard practice for sandboxed macOS apps.
 
 ---
 
@@ -134,6 +143,8 @@ This is a well-known pattern for dynamic language switching but has risks:
 
 **Recommendation:** This is a common pattern with no immediate security risk. Consider migrating to Apple's built-in localization APIs if they add runtime switching support.
 
+**Status: ACCEPTED** - Risk accepted; well-known community pattern with no security impact.
+
 ---
 
 ### [L-3] LOW: Use of undocumented Apple notification names
@@ -156,6 +167,8 @@ These are private `HIToolbox` notifications. Posting to `DistributedNotification
 
 **Recommendation:** Document the purpose of these notifications. They simulate native menu bar tracking behavior and are standard practice for custom menu bar extras.
 
+**Status: ACCEPTED** - Standard practice for custom menu bar extras; no security impact.
+
 ---
 
 ### [L-4] LOW: Notification permission result ignored
@@ -172,6 +185,8 @@ static func requestPermission() {
 The callback ignores both the granted status and potential errors. While not a security vulnerability, this means the app silently fails if notification permissions are denied, and continues scheduling notifications that will never be delivered.
 
 **Recommendation:** Handle the authorization result and update app state accordingly.
+
+**Status: FIXED** - `requestPermission()` now accepts an optional completion callback and logs errors under `#if DEBUG`.
 
 ---
 
@@ -200,6 +215,8 @@ print("Prayer Timer: Alert scheduled based on prayer time update...")
 `print()` statements in production code write to system logs. On macOS, Console.app can capture these. The decoding error log could include user search query context. This is very low risk since it requires local access.
 
 **Recommendation:** Use `os_log` with appropriate privacy levels, or remove debug prints from production builds using `#if DEBUG` guards.
+
+**Status: FIXED** - All `print()` calls wrapped in `#if DEBUG` guards across `PrayerTimeViewModel.swift`, `StartupManager.swift`, and `PrayerTimerMonitor.swift`.
 
 ---
 

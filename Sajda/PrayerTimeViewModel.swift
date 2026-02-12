@@ -149,7 +149,9 @@ class PrayerTimeViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
                     .map(\.data)
                     .decode(type: [NominatimResult].self, decoder: JSONDecoder())
                     .catch { error -> Just<[NominatimResult]> in
+                        #if DEBUG
                         print("🔴 DECODING ERROR: \(error)")
+                        #endif
                         return Just([])
                     }
                     .map { results -> [LocationSearchResult] in
@@ -295,7 +297,7 @@ class PrayerTimeViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
             }
         } else {
             countdown = "Now"
-            if adhanSound == .custom, let soundPath = customAdhanSoundPath.removingPercentEncoding, let soundURL = URL(string: soundPath), FileManager.default.fileExists(atPath: soundURL.path) {
+            if adhanSound == .custom, let soundPath = customAdhanSoundPath.removingPercentEncoding, let soundURL = URL(string: soundPath), soundURL.isFileURL, FileManager.default.fileExists(atPath: soundURL.path) {
                 adhanPlayer = NSSound(contentsOf: soundURL, byReference: true)
                 adhanPlayer?.play()
             }

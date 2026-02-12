@@ -31,7 +31,9 @@ class PrayerTimerMonitor {
         timer?.invalidate()
 
         guard isEnabled else {
+            #if DEBUG
             print("Prayer Timer is disabled. No timer will be scheduled.")
+            #endif
             return
         }
         
@@ -50,7 +52,9 @@ class PrayerTimerMonitor {
             let timeUntilTrigger = triggerTime.timeIntervalSinceNow
             guard timeUntilTrigger > 0 else { return }
             
+            #if DEBUG
             print("Prayer Timer: Alert scheduled based on prayer time update. Firing in \(String(format: "%.1f", timeUntilTrigger / 60)) minutes.")
+            #endif
 
             timer = Timer.scheduledTimer(withTimeInterval: timeUntilTrigger, repeats: false) { _ in
                 AlertWindowManager.shared.showAlert()
